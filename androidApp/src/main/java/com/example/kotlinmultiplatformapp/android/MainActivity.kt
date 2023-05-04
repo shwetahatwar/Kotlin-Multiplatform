@@ -1,5 +1,6 @@
 package com.example.kotlinmultiplatformapp.android
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,11 +16,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.kotlinmultiplatformapp.Greeting
 
 class MainActivity : ComponentActivity() {
+
+    private val enableButton = mutableStateOf(true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -39,15 +44,17 @@ class MainActivity : ComponentActivity() {
                     item {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceAround
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+
                         ) {
-                            Button(onClick = {
+                            FilledButton(
+                                onClick = {
                                 multiplePhotoPickerLauncher.launch(
                                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
                                 )
-                            }) {
-                                Text(text = "Pick media")
-                            }
+                            }, text = stringResource(id = R.string.select_photos),
+                                isEnabled = enableButton.value)
                         }
                     }
                     items(selectedImageUris) { uri ->
@@ -57,4 +64,16 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun onPhotoSelected() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+    }
+
+    companion object {
+        private val PICK_IMAGE = 0
+    }
 }
+
