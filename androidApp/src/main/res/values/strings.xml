@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="select_photos">Select Photos</string>
+    <string name="Toolbar_title">Select Photos</string>
+    <string name="no_photos_available">No Photos</string>
+    <string name="no_photo_available">No Photos available</string>
 </resources>

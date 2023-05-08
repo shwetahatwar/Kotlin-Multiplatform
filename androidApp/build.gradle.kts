@@ -15,6 +15,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.4"
@@ -46,4 +47,5 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.4.0")
     implementation("androidx.compose.material:material:1.4.0")
     implementation("androidx.activity:activity-compose:1.7.0")
+    implementation("io.coil-kt:coil-compose:2.2.0")
 }

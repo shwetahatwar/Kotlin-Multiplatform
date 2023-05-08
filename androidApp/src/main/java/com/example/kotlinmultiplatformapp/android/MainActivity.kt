@@ -1,6 +1,5 @@
 package com.example.kotlinmultiplatformapp.android
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,72 +7,130 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.kotlinmultiplatformapp.Greeting
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 
 class MainActivity : ComponentActivity() {
 
-    private val enableButton = mutableStateOf(true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            MyApplicationTheme {
-                var selectedImageUris by remember {
-                    mutableStateOf<List<Uri>>(emptyList())
-                }
-                val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.PickMultipleVisualMedia(),
-                    onResult = { uris -> selectedImageUris = uris }
-                )
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
+            MyApplicationTheme() {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
                 ) {
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
-
-                        ) {
-                            FilledButton(
-                                onClick = {
-                                multiplePhotoPickerLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
-                                )
-                            }, text = stringResource(id = R.string.select_photos),
-                                isEnabled = enableButton.value)
-                        }
-                    }
-                    items(selectedImageUris) { uri ->
-
-                    }
+                    AppContent()
                 }
             }
         }
     }
+}
 
-    private fun onPhotoSelected() {
-        val intent = Intent()
-        intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-    }
+@OptIn(ExperimentalCoilApi::class, ExperimentalFoundationApi::class)
+@Composable
+fun AppContent() {
 
-    companion object {
-        private val PICK_IMAGE = 0
+    var selectImages by remember { mutableStateOf(listOf<Uri>()) }
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
+            selectImages = it
+        }
+    
+    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        onResult = { uris -> selectImages = uris }
+    )
+
+    Column(
+        Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(
+            onClick = {  multiplePhotoPickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            ) },
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(10.dp)
+        ) {
+            Text(text = "Pick Image From Gallery")
+        }
+
+            LazyVerticalGrid(columns = GridCells.Fixed(2),
+            ) {
+                items(selectImages) { uri ->
+                    Image(
+                        painter = rememberImagePainter(uri),
+                        contentScale = ContentScale.FillWidth,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(16.dp, 8.dp)
+                            .size(100.dp)
+                            .clickable {
+
+                            }
+                    )
+                }
+            }
+
     }
 }
+
+
+@Composable
+fun LazyVerticalGridDemo(function: () -> Unit) {
+    val list = (1..10).map { it.toString() }
+
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(128.dp),
+
+        // content padding
+        contentPadding = PaddingValues(
+            start = 12.dp,
+            top = 16.dp,
+            end = 12.dp,
+            bottom = 16.dp
+        ),
+        content = {
+            items(list.size) { index ->
+                Card(
+                    backgroundColor = Color.Red,
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                    elevation = 8.dp,
+                ) {
+                    Text(
+                        text = list[index],
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp,
+                        color = Color(0xFFFFFFFF),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        }
+    )
+}
+
+
 
