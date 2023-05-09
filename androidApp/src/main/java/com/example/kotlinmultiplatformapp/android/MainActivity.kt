@@ -57,7 +57,7 @@ fun AppContent() {
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         //lets the user select up to 5 media files
        // contract = ActivityResultContracts.PickMultipleVisualMedia(5),
-        contract = ActivityResultContracts.PickMultipleVisualMedia(5),
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris -> selectImages = uris }
     )
 

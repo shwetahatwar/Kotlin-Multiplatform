@@ -8,7 +8,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".PickImageFromGalleryInJetpackCompose"
+            android:name=".PickImage"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,11 +17,15 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".PickImageFromGalleryInJetpackCompose"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:exported="false" />
         <activity
             android:name=".ShowImagesInList"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:exported="false" />
     </application>
